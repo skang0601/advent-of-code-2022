@@ -57,23 +57,26 @@ import (
 
 // Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
 
-
-func CountCalories() error {
+func One() error {
 	oneInputFile := "one.input"
 	input, err := readInput(oneInputFile)
 
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	curr := 0
 	calorieCount := make(map[int]int)
 	// A newline in the input would indicate that we're moving onto the next elf
 	for _, cal := range input {
 		switch cal {
-		case "\n","":
+		case "\n", "":
 			curr++
 		default:
 			val, err := strconv.Atoi(cal)
-			if err != nil { return err }
+			if err != nil {
+				return err
+			}
 			calorieCount[curr] += val
 		}
 	}
@@ -87,13 +90,8 @@ func CountCalories() error {
 		return calorieCount[keys[i]] > calorieCount[keys[j]]
 	})
 
-
-
 	fmt.Println(calorieCount[keys[0]])
 	fmt.Println(calorieCount[keys[0]] + calorieCount[keys[1]] + calorieCount[keys[2]])
 
-
-	
 	return nil
-
 }

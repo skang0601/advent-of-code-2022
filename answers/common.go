@@ -13,10 +13,11 @@ const (
 	inputDir = "./inputs/"
 )
 
-
 func readInput(fileName string) ([]string, error) {
 	f, err := os.Open(inputDir + fileName)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	defer f.Close()
 	output := make([]string, 0)
