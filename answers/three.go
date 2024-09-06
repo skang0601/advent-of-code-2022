@@ -2,6 +2,8 @@ package answers
 
 import (
 	"fmt"
+
+	"golang.org/x/tools/go/analysis/passes/slog"
 )
 
 // --- Day 3: Rucksack Reorganization ---
