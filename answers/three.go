@@ -2,8 +2,7 @@ package answers
 
 import (
 	"fmt"
-
-	"golang.org/x/tools/go/analysis/passes/slog"
+	"maps"
 )
 
 // --- Day 3: Rucksack Reorganization ---
@@ -41,27 +40,72 @@ import (
 
 // Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?
 
+// --- Part Two ---
+
+// As you finish identifying the misplaced items, the Elves come to you with another issue.
+
+// For safety, the Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For efficiency, within each group of three Elves, the badge is the only item type carried by all three Elves. That is, if a group's badge is item type B, then all three Elves will have item type B somewhere in their rucksack, and at most two of the Elves will be carrying any other item type.
+
+// The problem is that someone forgot to put this year's updated authenticity sticker on the badges. All of the badges need to be pulled out of the rucksacks so the new authenticity stickers can be attached.
+
+// Additionally, nobody wrote down which item type corresponds to each group's badges. The only way to tell which item type is the right one is by finding the one item type that is common between all three Elves in each group.
+
+// Every set of three lines in your list corresponds to a single group, but each group can have a different badge item type. So, in the above example, the first group's rucksacks are the first three lines:
+
+// vJrwpWtwJgWrhcsFMMfFFhFp
+// jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+// PmmdzqPrVvPwwTWBwg
+
+// And the second group's rucksacks are the next three lines:
+
+// wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+// ttgJtRGJQctTZtZT
+// CrZsJsPPZsGzwwsLwLmpwMDw
+
+// In the first group, the only item type that appears in all three rucksacks is lowercase r; this must be their badges. In the second group, their badge item type must be Z.
+
+// Priorities for these items must still be found to organize the sticker attachment efforts: here, they are 18 (r) for the first group and 52 (Z) for the second group. The sum of these is 70.
+
+// Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?
+
 func Three() error {
+	var sum int
 	inputFile := "three.input"
 	inputs, err := readInput(inputFile)
 	if err != nil {
 		return err
 	}
 
-	sum := 0
+	sum = 0
 
 	for _, i := range inputs {
 		//fmt.Printf("Processing: %s\n", i)
-		sum += toPriority(findCommonItem([]byte(i[0:len(i)/2]), []byte(i[len(i)/2:len(i)])))
+		common := findCommonItem([]byte(i[0:len(i)/2]), []byte(i[len(i)/2:len(i)]))
+		priority := toPriority(common)
+
+		fmt.Printf("Dupe: %s (%d)\n", fmt.Sprint(common), priority)
+		sum += priority
+	}
+	fmt.Printf("Part 1: %d\n", sum)
+
+	// Part 2
+	sum = 0
+	for i := 0; i < len(inputs)-2; i += 3 {
+		// Based on the input data it looks like it's in a multiple of 3 so no need to do stringent validation.
+		badge := findCommonItems(inputs[i], inputs[i+1], inputs[i+2])
+		priority := toPriority(badge)
+		fmt.Printf("Found the badge type for: %s - %s - %s as %s (%d)\n", inputs[i], inputs[i+1], inputs[i+2], string(badge), priority)
+
+		sum += priority
 	}
 
-	fmt.Printf("Part 1: %d\n", sum)
+	fmt.Printf("Part 2: %d\n", sum)
 
 	return nil
 }
 
 func findCommonItem(s1 []byte, s2 []byte) int {
-	fmt.Printf("Comparing rucksack %s against %s\n", string(s1), string(s2))
+	//fmt.Printf("Comparing rucksack %s against %s\n", string(s1), string(s2))
 	var found int
 	seen := map[byte]bool{}
 
@@ -71,9 +115,44 @@ func findCommonItem(s1 []byte, s2 []byte) int {
 
 	for _, i := range s2 {
 		if _, ok := seen[i]; ok {
-			fmt.Printf("Found common element %s\n", string(i))
+			//fmt.Printf("Found common element %s\n", string(i))
 			found = int(i)
+			break
 		}
+	}
+
+	return found
+}
+
+// findCommonItems returns characters that exists in all strings passed in.
+func findCommonItems(s ...string) int {
+	//fmt.Printf("Comparing rucksack %s against %s\n", string(s1), string(s2))
+	var found int
+	seen := map[byte]bool{}
+
+	// Look at each string
+	for _, item := range s {
+		curr := map[byte]bool{}
+		for _, i := range item {
+			curr[byte(i)] = true
+		}
+
+		if len(seen) == 0 {
+			maps.Copy(seen, curr)
+			continue
+		}
+
+		// find the set intersection of the new string
+		for k := range seen {
+			if _, ok := curr[k]; !ok {
+				delete(seen, k)
+			}
+		}
+	}
+
+	// For the purpose of this problem we assume there's only one duplicate for simplicity.
+	for k := range seen {
+		found = int(k)
 	}
 
 	return found
@@ -85,6 +164,6 @@ func toPriority(c int) int {
 	if c >= 65 && c <= 90 {
 		return (c - 65) + 27
 	} else {
-		return (c - 97) + 27
+		return c - 96
 	}
 }

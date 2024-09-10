@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	answers "github.com/skang0601/advent-of-code-2022/answers"
 )
 
