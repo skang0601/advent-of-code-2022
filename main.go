@@ -13,6 +13,8 @@ func main() {
 		"3": answers.Three,
 		"4": answers.Four,
 		"5": answers.Five,
+		"6": answers.Six,
+		"7": nil,
 	}
 
 	fmt.Println("Enter the advent day (1-25)")
