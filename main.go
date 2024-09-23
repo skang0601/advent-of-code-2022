@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/rivo/tview"
 
 	answers "github.com/skang0601/advent-of-code-2022/answers"
 )
@@ -15,6 +16,7 @@ func main() {
 		"5": answers.Five,
 		"6": answers.Six,
 		"7": answers.Seven,
+		"8": answers.Eight,
 	}
 
 	fmt.Println("Enter the advent day (1-25)")

@@ -2,6 +2,7 @@ package answers
 
 import (
 	"bufio"
+	"cmp"
 	"os"
 )
 
@@ -162,4 +163,12 @@ func (n *Node) Cd(path string) *Node {
 	}
 
 	return curr
+}
+
+func max[T cmp.Ordered](i, j T) T {
+	if i > j {
+		return i
+	}
+
+	return j
 }
